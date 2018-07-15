@@ -1,52 +1,48 @@
-;;initializes for el.get
-(when load-file-name
-  (setq user-emacs-directory (file-name-directory load-file-name)))
+;;reference from http://emacs-jp.github.io/packages/package-management/package-el.html
+(require 'package)
 
-(add-to-list 'load-path (locate-user-emacs-file "el-get/el-get"))
-(unless (require 'el-get nil 'noerror)
-  (with-current-buffer
-      (url-retrieve-synchronously
-       "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
-    (goto-char (point-max))
-    (eval-print-last-sexp)))
+;; MELPAを追加
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
-;;パッケージインストール
-(el-get-bundle auto-complete)
+;; MELPA-stableを追加
+(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+
+;; Marmaladeを追加
+(add-to-list 'package-archives  '("marmalade" . "http://marmalade-repo.org/packages/") t)
+
+;; Orgを追加
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+
+;; 初期化
 (package-initialize)
+;;reference from/>
 
-;;ruby-mode
- (autoload 'ruby-mode "ruby-mode"
-   "Mode for editing ruby source files" t)
-  (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
-  (add-to-list 'auto-mode-alist '("Capfile$" . ruby-mode))
-  (add-to-list 'auto-mode-alist '("Gemfile$" . ruby-mode))
-  (add-to-list 'auto-mode-alist '("[Rr]akefile$" . ruby-mode))
+;; タブにスペースを使用する
+(setq-default tab-width 4 indent-tabs-mode nil)
 
+;; gocodeのパスを指定する
+(add-to-list 'load-path "/Users/nagaiyouta/go/src/github.com/nsf/gocode/emacs")
 
-;;linuxコーディング規約用
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            ;; Add kernel style                                                                                                             
-            (c-add-style
-             "linux-tabs-only"
-             '("linux" (c-offsets-alist
-                        (arglist-cont-nonempty
-                         c-lineup-gcc-asm-reg
-                         c-lineup-arglist-tabs-only))))))
-
-(add-hook 'c-mode-hook
-          (lambda ()
-            (when (eq major-mode 'c-mode)
-              (setq indent-tabs-mode t)
-              (setq show-trailing-whitespace t)
-              (c-set-style "linux-tabs-only"))))
-
-(prefer-coding-system 'utf-8-unix)
-
+;; go-flymakeのパスを通す
+(add-to-list 'load-path "/Users/nagaiyouta/go/src/github.com/dougm/goflymake")
 
 (custom-set-variables
- '(package-selected-packages
-   (quote
-    (dirtree yasnippet web-mode use-package smex smartparens projectile prodigy powerline popwin pallet nyan-mode neotree multiple-cursors move-text magit idle-highlight-mode htmlize flycheck-cask expand-region exec-path-from-shell drag-stuff auto-complete))))
-(custom-set-faces)
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages (quote (go-eldoc go-autocomplete flycheck company-go))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
 
+;;gocodeをloadする
+(require 'go-autocomplete)
+(require 'auto-complete-config)
+(ac-config-default)
+
+;;goflymakeをloadlする
+(require 'go-flymake)
